@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta property="og:title" content="Wartime Tuckshop—Which WWII Food Are You?" />
+  <meta property="og:description" content="8 wartime scenarios. One food spirit. Based on Singapore's WWII history." />
+  <meta property="og:url" content="https://wartimetuckshop.vercel.app" />
+  <meta property="og:type" content="website" />
+  <title>Wartime Tuckshop: Which WWII Food Are You?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-bg">
+    <div class="quiz-container">
+
+      <div class="corner tl">✦</div>
+      <div class="corner tr">✦</div>
+      <div class="corner bl">✦</div>
+      <div class="corner br">✦</div>
+
+      <header class="quiz-header">
+        <p class="kicker">Singapore &middot; 1942&ndash;1945</p>
+        <div class="header-rule"><span>✦</span></div>
+        <h1>Wartime Tuckshop</h1>
+        <p class="header-sub">Which WWII food are you?</p>
+        <div class="header-rule"><span>✦</span></div>
+        <p class="programme-credit">A pilot under the TF-NUS Heritage Champions Programme</p>
+      </header>
+
+      <!-- Start Screen -->
+      <section id="start-screen" class="screen">
+        <div class="start-inner">
+          <p class="start-lede">From 1942 to 1945, Singapore was under Japanese Occupation. Rice was rationed, then priced out of reach. Families grew tapioca on any open ground they could find, preserved fish without refrigeration, and stretched every meal further than seemed possible.</p>
+          <p class="start-lede">Eight wartime scenarios. Find out which food you are.</p>
+          <button id="start-btn" class="btn btn-primary">Begin the Journey</button>
+          <div class="social-links">
+            <a href="https://www.instagram.com/YOUR_HANDLE" target="_blank" rel="noopener" class="social-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+              Instagram
+            </a>
+            <a href="https://YOUR_COOKBOOK_WEBSITE" target="_blank" rel="noopener" class="social-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Digital Cookbook
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz Screen -->
+      <section id="quiz-screen" class="screen hidden">
+        <div class="progress-wrapper">
+          <div class="progress-track">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+          <span class="progress-label">
+            <span id="current-q">1</span> of <span id="total-q">8</span>
+          </span>
+        </div>
+        <div class="question-container">
+          <p class="question-context" id="question-context"></p>
+          <h2 id="question-text"></h2>
+          <div id="options-container" class="options"></div>
+        </div>
+        <div class="quiz-controls">
+          <button id="prev-btn" class="btn btn-ghost hidden">&larr; Back</button>
+          <button id="next-btn" class="btn btn-primary hidden">Next &rarr;</button>
+          <button id="submit-btn" class="btn btn-primary hidden">See My Result &rarr;</button>
+        </div>
+      </section>
+
+      <!-- Results Screen -->
+      <section id="results-screen" class="screen hidden">
+
+        <p class="results-intro">Your wartime food spirit is&hellip;</p>
+
+        <!-- Result card — captured as image for sharing -->
+        <div id="result-card" class="result-card">
+          <div class="rc-header">
+            <span class="rc-stamp">WARTIME TUCKSHOP</span>
+            <span class="rc-date">Singapore, 1942&ndash;1945</span>
+          </div>
+
+          <div class="rc-image-wrap">
+            <img id="result-img" src="" alt="" />
+          </div>
+
+          <div class="rc-emoji" id="rc-emoji"></div>
+          <h2 class="rc-name" id="rc-name"></h2>
+          <p class="rc-tagline" id="rc-tagline"></p>
+
+          <div class="rc-traits" id="rc-traits"></div>
+
+          <div class="rc-divider">&#8212; ✦ &#8212;</div>
+
+          <p class="rc-description" id="rc-description"></p>
+
+          <div class="rc-meta-grid">
+            <div class="rc-meta-cell">
+              <span class="rc-meta-label">Strength</span>
+              <span class="rc-meta-value" id="rc-strength"></span>
+            </div>
+            <div class="rc-meta-cell">
+              <span class="rc-meta-label">Weakness</span>
+              <span class="rc-meta-value" id="rc-weakness"></span>
+            </div>
+            <div class="rc-meta-cell">
+              <span class="rc-meta-label">Pairs with</span>
+              <span class="rc-meta-value" id="rc-pairs"></span>
+            </div>
+            <div class="rc-meta-cell">
+              <span class="rc-meta-label">Clashes with</span>
+              <span class="rc-meta-value" id="rc-clashes"></span>
+            </div>
+          </div>
+
+          <div class="rc-fact" id="rc-fact"></div>
+
+          <div class="rc-footer">
+            <span class="rc-credit">Wartime Tuckshop &middot; TF-NUS Heritage Champions Programme</span>
+            <span class="rc-url">wartimetuckshop.vercel.app</span>
+          </div>
+        </div>
+
+        <!-- Share actions — not part of the downloaded card -->
+        <div class="share-panel">
+          <p class="share-heading">Share your result</p>
+          <div class="share-actions">
+            <button id="btn-share-primary" class="btn btn-primary btn-share-primary">Share &rarr;</button>
+            <div class="share-secondary">
+              <button id="btn-copy" class="share-text-btn">Copy link</button>
+              <span class="share-dot">&middot;</span>
+              <button id="btn-save" class="share-text-btn">Save card for Instagram</button>
+            </div>
+          </div>
+          <p id="share-feedback" class="share-feedback hidden"></p>
+        </div>
+
+        <div class="results-footer">
+          <button id="restart-btn" class="btn btn-ghost restart-btn">Take the quiz again</button>
+          <div class="social-links social-links--results">
+            <a href="https://www.instagram.com/YOUR_HANDLE" target="_blank" rel="noopener" class="social-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+              Follow us
+            </a>
+            <a href="https://YOUR_COOKBOOK_WEBSITE" target="_blank" rel="noopener" class="social-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              Digital Cookbook
+            </a>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
