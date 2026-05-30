@@ -5,7 +5,18 @@
 
 import { Question, PersonalityResult } from './types';
 
-export const LOGO_PATH = "/src/assets/images/logo.png";
+// Import images statically using ES modules so Vite bundles them properly
+import logoImg from './assets/images/logo.png';
+import tapioca1 from './assets/images/tapioca.png';
+import tapioca2 from './assets/images/tapioca_1.png';
+import ragiRoti1 from './assets/images/ragi roti.png';
+import kangkong1 from './assets/images/kangkong.png';
+import kangkong2 from './assets/images/kangkong_1.png';
+import ikanBilis1 from './assets/images/ikan bilis.png';
+import ikanBilis2 from './assets/images/ikan bilis_1.png';
+import rojak1 from './assets/images/rojak.png';
+
+export const LOGO_PATH = logoImg;
 
 export const quizData: Question[] = [
   {
@@ -80,7 +91,7 @@ export const personalities: PersonalityResult[] = [
     name: "Tapioca",
     emoji: "🌱",
     color: "#5c3310",
-    imgSrcs: ["/src/assets/images/tapioca.png", "/src/assets/images/tapioca_1.png"],
+    imgSrcs: [tapioca1, tapioca2],
     traits: ["Adaptable", "Resilient", "Self-sufficient"],
     description: "You are driven by a quiet, unyielding core that focuses on practical progress under pressure.",
     strength: "You possess high resilience and are capable of functioning independently in unpredictable, low-resource settings.",
@@ -94,7 +105,7 @@ export const personalities: PersonalityResult[] = [
     name: "Ragi Roti",
     emoji: "🫓",
     color: "#8b4513",
-    imgSrcs: ["/src/assets/images/ragi roti.png"],
+    imgSrcs: [ragiRoti1],
     traits: ["Generous", "Loyal", "Communal"],
     description: "Your personality is anchored in empathy and group cooperation. For you, teamwork makes the dream work.",
     strength: "You naturally coordinate groups and bring people together. You can be relied upon to help others.",
@@ -108,7 +119,7 @@ export const personalities: PersonalityResult[] = [
     name: "Lemak Kangkong & Sweet Potatoes",
     emoji: "🥬",
     color: "#2a5c34",
-    imgSrcs: ["/src/assets/images/kangkong.png", "/src/assets/images/kangkong_1.png"],
+    imgSrcs: [kangkong1, kangkong2],
     traits: ["Inventive", "Caring", "Thoughtful"],
     description: "You believe that a touch of care, formatting, and quality matters, especially when surroundings are bleak.",
     strength: "You bring beauty, perspective, and genuine warmth to difficult environments, lifting the spirits of those around you.",
@@ -122,7 +133,7 @@ export const personalities: PersonalityResult[] = [
     name: "Ikan Bilis",
     emoji: "🐟",
     color: "#1e3d5c",
-    imgSrcs: ["/src/assets/images/ikan bilis.png", "/src/assets/images/ikan bilis_1.png"],
+    imgSrcs: [ikanBilis1, ikanBilis2],
     traits: ["Disciplined", "Measured", "Farsighted"],
     description: "You value organization, structure, and foresight, preparing cleanly for complications before they occur.",
     strength: "You plan with clarity and are ready for many situations. You always have a backup plan.",
@@ -136,7 +147,7 @@ export const personalities: PersonalityResult[] = [
     name: "Wartime Rojak",
     emoji: "🍍",
     color: "#7a4a1e",
-    imgSrcs: ["/src/assets/images/rojak.png"],
+    imgSrcs: [rojak1],
     traits: ["Creative", "Versatile", "Inclusive"],
     description: "You correspond to a balanced mix of multiple traits, which designates you as the Wartime Rojak, a creative and unique dish",
     strength: "You think creatively and are a jack of all trades. You work easily with diverse groups of people.",
