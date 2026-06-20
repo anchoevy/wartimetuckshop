@@ -7,14 +7,14 @@ import { Question, PersonalityResult } from './types';
 
 // Import images statically using ES modules so Vite bundles them properly
 import logoImg from './assets/images/logo.png';
-import tapioca1 from './assets/images/tapioca.png';
-import tapioca2 from './assets/images/tapioca_1.png';
-import ragiRoti1 from './assets/images/ragi roti.png';
-import kangkong1 from './assets/images/kangkong.png';
-import kangkong2 from './assets/images/kangkong_1.png';
-import ikanBilis1 from './assets/images/ikan bilis.png';
-import ikanBilis2 from './assets/images/ikan bilis_1.png';
-import rojak1 from './assets/images/rojak.png';
+import tapiocaImg from './assets/images/tapioca.png';
+import tapioca2Img from './assets/images/tapioca (2).png';
+import ragiRotiImg from './assets/images/ragi_roti.png';
+import kangkongImg from './assets/images/kangkong.png';
+import kangkong2Img from './assets/images/kangkong (2).png';
+import ikanBilisImg from './assets/images/ikan_bilis.png';
+import ikanBilis2Img from './assets/images/ikan_bilis (2).png';
+import rojakImg from './assets/images/rojak.png';
 
 export const LOGO_PATH = logoImg;
 
@@ -78,7 +78,7 @@ export const quizData: Question[] = [
   {
     question: "Would you rather live in the city or in the countryside?",
     options: [
-      "City. I like the convenience and the urban lifestyle",
+      "City. I like the convenience and the urban lifestyle.",
       "Countryside. I prefer the slower pace of life."
     ],
     map: [1, 2] // Choice A -> Ragi Roti (1), Choice B -> Lemak (2)
@@ -91,11 +91,11 @@ export const personalities: PersonalityResult[] = [
     name: "Tapioca",
     emoji: "🌱",
     color: "#5c3310",
-    imgSrcs: [tapioca1, tapioca2],
+    imgSrcs: [tapiocaImg, tapioca2Img],
     traits: ["Adaptable", "Resilient", "Self-sufficient"],
-    description: "You are driven by a quiet, unyielding core that focuses on practical progress under pressure.",
-    strength: "You possess high resilience and are capable of functioning independently in unpredictable, low-resource settings.",
-    weakness: "Your habit of managing challenges on your own can sometimes prevent you from reaching out for support.",
+    description: "You are driven by a quiet and unyielding spirit that focuses on practical progress under pressure.",
+    strength: "High resilience; excels at working independently under pressure.",
+    weakness: "Reluctance to ask for help when managing tough situations.",
     pairs: "Ikan Bilis",
     clashes: "Ragi Roti",
     fact: "During WWII, tapioca replaced staples like rice, becoming the dominant crop in Singapore. It grew well in various soil conditions, and its leaves were also edible."
@@ -105,11 +105,11 @@ export const personalities: PersonalityResult[] = [
     name: "Ragi Roti",
     emoji: "🫓",
     color: "#8b4513",
-    imgSrcs: [ragiRoti1],
+    imgSrcs: [ragiRotiImg],
     traits: ["Generous", "Loyal", "Communal"],
     description: "Your personality is anchored in empathy and group cooperation. For you, teamwork makes the dream work.",
-    strength: "You naturally coordinate groups and bring people together. You can be relied upon to help others.",
-    weakness: "You give so generously of your personal energy that you may sometimes forget to take care of yourself.",
+    strength: "Excellent at coordinating teams and uniting groups with empathy.",
+    weakness: "May neglect your own needs due to generous support of others.",
     pairs: "Lemak Kangkong & Sweet Potatoes",
     clashes: "Tapioca",
     fact: "Ragi (finger millet) was also another staple during the war. It was often used to make breads or porridge."
@@ -119,11 +119,11 @@ export const personalities: PersonalityResult[] = [
     name: "Lemak Kangkong & Sweet Potatoes",
     emoji: "🥬",
     color: "#2a5c34",
-    imgSrcs: [kangkong1, kangkong2],
+    imgSrcs: [kangkongImg, kangkong2Img],
     traits: ["Inventive", "Caring", "Thoughtful"],
-    description: "You believe that a touch of care, formatting, and quality matters, especially when surroundings are bleak.",
-    strength: "You bring beauty, perspective, and genuine warmth to difficult environments, lifting the spirits of those around you.",
-    weakness: "You invest deep emotional commitment into your work, sometimes to your own detriment.",
+    description: "You believe that a touch of care, support, and quality matters, especially when surroundings are bleak.",
+    strength: "Uplifts spirits by bringing beauty and warmth to tough situations.",
+    weakness: "Deep emotional investment can lead to personal exhaustion.",
     pairs: "Ragi Roti",
     clashes: "Ikan Bilis",
     fact: "During the occupation, crops like kangkong and sweet potaotes were grown at home and in schools. Coconut was a key ingredient which flavoured many dishes, especially in Malay and Peranakan cuisine."
@@ -133,11 +133,11 @@ export const personalities: PersonalityResult[] = [
     name: "Ikan Bilis",
     emoji: "🐟",
     color: "#1e3d5c",
-    imgSrcs: [ikanBilis1, ikanBilis2],
+    imgSrcs: [ikanBilisImg, ikanBilis2Img],
     traits: ["Disciplined", "Measured", "Farsighted"],
-    description: "You value organization, structure, and foresight, preparing cleanly for complications before they occur.",
-    strength: "You plan with clarity and are ready for many situations. You always have a backup plan.",
-    weakness: "Your preference for strictly realistic, organized solutions can sometimes be perceived as emotionally guarded.",
+    description: "You value organization, structure, and foresight, preparing for complications before they occur.",
+    strength: "Pragmatic planning with clear backup options for any hurdle.",
+    weakness: "Highly realistic approach may seem emotionally reserved.",
     pairs: "Tapioca",
     clashes: "Lemak Kangkong & Sweet Potatoes",
     fact: "Coastal communities often caught fish and salted them for preservation. Ikan bilis could be fried or used in soup stock, making it a versatile ingredient in wartime cooking."
@@ -147,11 +147,11 @@ export const personalities: PersonalityResult[] = [
     name: "Wartime Rojak",
     emoji: "🍍",
     color: "#7a4a1e",
-    imgSrcs: [rojak1],
+    imgSrcs: [rojakImg],
     traits: ["Creative", "Versatile", "Inclusive"],
-    description: "You correspond to a balanced mix of multiple traits, which designates you as the Wartime Rojak, a creative and unique dish",
-    strength: "You think creatively and are a jack of all trades. You work easily with diverse groups of people.",
-    weakness: "Because you can fulfill many different roles, you occasionally find it challenging to settle on a single path.",
+    description: "You correspond to a balanced mix of multiple traits,\nmaking you unique.",
+    strength: "Creative, versatile, and excellent at collaborating with diverse groups.",
+    weakness: "Can find it challenging to focus and settle on a single path.",
     pairs: "Everyone",
     clashes: "No one",
     fact: "Interestingly developed by British prisoners of war, the wartime rojak bears a curious mix of vegetables such as beetroot and cucumber, mixed with an untraditional rojak sauce of potatoes and tomatoes."

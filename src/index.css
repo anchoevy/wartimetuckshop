@@ -44,6 +44,7 @@
 
 /* Custom rustic design patterns */
 html, body {
+  color-scheme: light;
   background-color: var(--color-paper);
   background-image:
     radial-gradient(ellipse at 20% 20%, rgba(180, 130, 60, 0.08) 0%, transparent 60%),

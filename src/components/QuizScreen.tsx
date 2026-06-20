@@ -38,8 +38,8 @@ export default function QuizScreen({
   return (
     <div className="w-full">
       {/* Progress Section */}
-      <div className="flex items-center gap-4 mb-8">
-        <div className="flex-1 h-1.5 bg-paper-dark rounded-full overflow-hidden">
+      <div className="flex items-center justify-between gap-4 mb-5 sm:mb-8">
+        <div className="flex-1 max-w-[120px] xs:max-w-[160px] h-2 bg-paper-dark/60 rounded-xs overflow-hidden">
           <motion.div
             className="h-full bg-accent"
             initial={{ width: 0 }}
@@ -47,7 +47,7 @@ export default function QuizScreen({
             transition={{ duration: 0.3 }}
           />
         </div>
-        <span className="text-xs font-mono tracking-widest text-ink-faded uppercase whitespace-nowrap">
+        <span className="text-[10px] sm:text-xs font-mono tracking-[0.2em] text-ink-faded uppercase whitespace-nowrap">
           Question {currentQuestion + 1} of {totalQuestions}
         </span>
       </div>
@@ -60,39 +60,39 @@ export default function QuizScreen({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-3.5"
         >
-          {/* Question Prompt */}
-          <h2 className="font-display text-base md:text-xl font-bold leading-normal text-ink mb-4">
+          {/* Question Prompt - Highly readable bold journal serif */}
+          <h2 className="font-serif text-[17px] xs:text-[19px] sm:text-2xl font-extrabold leading-relaxed text-ink mb-4 sm:mb-6 text-left">
             {question.question}
           </h2>
 
           {/* Options Grid */}
-          <div className="flex flex-col gap-3.5 mb-6">
+          <div className="flex flex-col gap-3 mb-5 sm:mb-7">
             {question.options.map((optionText, idx) => {
               const isSelected = selectedOption === idx;
               return (
                 <button
                   key={idx}
                   onClick={() => onSelectOption(idx)}
-                  className={`group flex items-start text-left gap-4 p-4 border rounded-xs cursor-pointer transition-all duration-200 outline-none ${
+                  className={`group flex items-center text-left gap-4 p-3.5 sm:p-4.5 border-2 rounded-xs cursor-pointer transition-all duration-200 outline-none w-full ${
                     isSelected
                       ? 'bg-ink border-ink text-cream shadow-md'
-                      : 'bg-cream border-border hover:bg-paper/40 hover:border-ink-faded text-ink'
+                      : 'bg-[#faf5eb] border-[#d4c3a3]/60 hover:bg-paper/40 hover:border-accent text-ink'
                   }`}
                 >
                   {/* Option Badge */}
                   <span
-                    className={`flex items-center justify-center w-6 h-6 mt-0.5 text-xs font-display font-bold border-2 rounded-xs select-none flex-shrink-0 transition-colors duration-200 ${
+                    className={`flex items-center justify-center w-7 h-7 text-xs font-serif font-bold border rounded-xs select-none flex-shrink-0 transition-colors duration-200 ${
                       isSelected
-                        ? 'border-cream text-cream'
-                        : 'border-border text-ink-faded group-hover:border-ink-faded group-hover:text-ink'
+                        ? 'border-cream text-cream bg-transparent'
+                        : 'border-[#d4c3a3] text-sepia bg-[#faf5eb] group-hover:border-accent group-hover:text-accent'
                     }`}
                   >
                     {letters[idx]}
                   </span>
 
-                  <span className="text-sm md:text-base font-serif leading-relaxed font-normal">
+                  <span className="text-xs xs:text-[13.5px] sm:text-[15px] font-serif leading-relaxed font-medium flex-1">
                     {optionText}
                   </span>
                 </button>
