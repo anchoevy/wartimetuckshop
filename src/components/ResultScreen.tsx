@@ -4,7 +4,7 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { Download, Share2, Copy, RotateCcw, Instagram } from 'lucide-react';
+import { Download, Share2, Copy, RotateCcw, Instagram, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { motion } from 'motion/react';
 import { PersonalityResult } from '../types';
@@ -18,6 +18,8 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [feedback, setFeedback] = useState<string>('');
   const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [exportedImgUrl, setExportedImgUrl] = useState<string | null>(null);
+  const [showSaveModal, setShowSaveModal] = useState<boolean>(false);
 
   const shareUrl = `${window.location.origin}${window.location.pathname}?result=${result.id}`;
   const shareText = `I'm ${result.name} ${result.emoji} on the Wartime Tuckshop quiz. Find out your WWII food personality here:`;
@@ -86,24 +88,41 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
         backgroundColor: '#fdf6e8', // Keep matching vintage background
         logging: false,
         onclone: (clonedDoc) => {
-          // You can modify cloned elements here if needed before drawing
           const clonedCard = clonedDoc.getElementById('result-card');
           if (clonedCard) {
             clonedCard.style.boxShadow = 'none';
+            // Strip any transition/animation classes that can freeze or distort html2canvas
+            const animatedElements = clonedCard.querySelectorAll('.animate-stamp-in, .transition-transform, .transition-all');
+            animatedElements.forEach((el) => {
+              el.classList.remove('animate-stamp-in');
+              el.classList.remove('transition-transform');
+              el.classList.remove('transition-all');
+              el.classList.remove('hover:scale-105');
+            });
           }
         }
       });
 
       const blobUrl = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-      downloadLink.download = `wartime-tuckshop-${result.id}.png`;
-      downloadLink.href = blobUrl;
-      downloadLink.click();
+      setExportedImgUrl(blobUrl);
+      setShowSaveModal(true);
+
+      // Programmatic direct download trigger for fully open environments
+      try {
+        const downloadLink = document.createElement('a');
+        downloadLink.download = `wartime-tuckshop-${result.id}.png`;
+        downloadLink.href = blobUrl;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      } catch (dlErr) {
+        console.warn("Direct programmatic download prevented by sandbox constraints", dlErr);
+      }
       
-      triggerFeedback('Successfully saved! Share it on your Instagram Stories.');
+      triggerFeedback('Stamp card ready! Click / Tap and hold to save.');
     } catch (error) {
       console.error(error);
-      triggerFeedback('Could not generate image. Try screenshotting instead!');
+      triggerFeedback('Could not auto-generate. Try taking a screenshot!');
     } finally {
       setIsExporting(false);
     }
@@ -285,6 +304,54 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
           </motion.p>
         )}
       </div>
+
+      {/* --- SAVE MODAL FALLBACK / PREVIEW --- */}
+      {showSaveModal && exportedImgUrl && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 xs:p-4 bg-ink/75 backdrop-blur-[2px]"
+        >
+          <motion.div
+            initial={{ scale: 0.95, y: 15 }}
+            animate={{ scale: 1, y: 0 }}
+            className="relative bg-cream border-2 border-border p-4 sm:p-5 rounded-md shadow-2xl max-w-xs sm:max-w-sm w-full text-center flex flex-col items-center gap-2.5"
+          >
+            <button
+              onClick={() => setShowSaveModal(false)}
+              className="absolute top-2 right-2 text-ink-faded hover:text-ink hover:bg-paper-dark/50 p-1.5 rounded-full cursor-pointer transition-colors duration-150"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            
+            <h3 className="font-serif text-sm sm:text-base font-extrabold text-ink tracking-tight mt-1.5">
+              Stamp Card Ready! ✦
+            </h3>
+            
+            <p className="font-serif text-[10px] sm:text-xs text-ink-light leading-normal px-2">
+              If the automatic download didn't start, please <span className="text-accent font-bold">tap & hold</span> on mobile, or <span className="text-accent font-bold">right-click</span> on desktop to save the image below!
+            </p>
+
+            {/* Generated card preview */}
+            <div className="border border-border/80 rounded-xs overflow-hidden shadow-md max-h-[42vh] flex justify-center bg-cream">
+              <img
+                src={exportedImgUrl}
+                alt="Wartime Stamp Card"
+                className="max-h-full w-auto object-contain"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+
+            <button
+              onClick={() => setShowSaveModal(false)}
+              className="w-full py-2 font-serif text-xs font-bold text-cream bg-ink border border-ink rounded-xs hover:bg-accent hover:border-accent cursor-pointer shadow-sm transition-all duration-200"
+            >
+              Done
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

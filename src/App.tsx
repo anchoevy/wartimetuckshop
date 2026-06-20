@@ -102,14 +102,14 @@ export default function App() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-1.5 xs:p-2 sm:p-6 md:p-10 bg-paper-dark/30 transition-all duration-300">
+    <div className="flex justify-center items-center min-h-screen p-1.5 xs:p-2 sm:p-4 md:p-8 bg-paper-dark/30 transition-all duration-300">
       <div 
-        className={`relative bg-cream border-2 border-border rounded-sm w-full max-w-2xl shadow-xl transition-all duration-300 flex flex-col justify-between ${
+        className={`relative bg-cream border-2 border-border rounded-sm w-full max-w-md shadow-xl transition-all duration-300 flex flex-col justify-between ${
           screen === 'start'
-            ? 'p-3.5 xs:p-5 sm:p-8 md:p-10'
+            ? 'p-4 xs:p-5 sm:p-6'
             : screen === 'result'
-              ? 'p-2 xs:p-3 sm:p-5 md:p-6'
-              : 'p-3 xs:p-4 sm:p-6 md:p-8'
+              ? 'p-2.5 xs:p-3 sm:p-4'
+              : 'p-4 xs:p-5'
         }`}
         style={{
           boxShadow: `
