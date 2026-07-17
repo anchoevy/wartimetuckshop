@@ -126,35 +126,34 @@ export default function App() {
       >
         {/* Vintage corner ornaments */}
         <>
-          <span className="absolute top-1.5 left-2 text-sepia text-[10px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
-          <span className="absolute top-1.5 right-2 text-sepia text-[10px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
-          <span className="absolute bottom-1.5 left-2 text-sepia text-[10px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
-          <span className="absolute bottom-1.5 right-2 text-sepia text-[10px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
+          <span className="absolute top-1 left-1.5 text-sepia text-[12px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
+          <span className="absolute top-1 right-1.5 text-sepia text-[12px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
+          <span className="absolute bottom-1 left-1.5 text-sepia text-[12px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
+          <span className="absolute bottom-1 right-1.5 text-sepia text-[12px] sm:text-xs font-serif pointer-events-none select-none">✦</span>
         </>
- 
-        {/* Global Tuckshop Header - Centered and elegant across all pages, dynamically sized to prevent scroll */}
+
         <header className={`text-center animate-fade-down flex flex-col items-center ${
           screen === 'result'
             ? 'mb-1.5 sm:mb-2.5'
             : 'mb-3.5 sm:mb-6 md:mb-8'
         }`}>
-          <p className="font-serif text-[8px] xs:text-[9.5px] sm:text-xs tracking-[0.25em] uppercase text-accent font-bold leading-none mb-0.5 sm:mb-1.5 text-[#a34839]">
+          <p className="font-serif text-[9px] xs:text-[9.5px] sm:text-xs tracking-[0.25em] uppercase text-accent font-bold leading-none mb-0.5 sm:mb-1.5 text-[#a34839]">
             Singapore WWII Heritage Project
           </p>
 
           <div className="w-full flex items-center gap-1 select-none opacity-40 my-0.5 xs:my-1">
             <div className="flex-1 h-[0.5px] bg-border" />
-            <span className="text-[6.5px] sm:text-[8px] text-[#b08040]">✦</span>
+            <span className="text-[7px] sm:text-[8px] text-[#b08040]">✦</span>
             <div className="flex-1 h-[0.5px] bg-border" />
           </div>
 
           <h1 className={`font-serif font-extrabold tracking-tight text-ink leading-tight ${
-            screen === 'result' ? 'text-xl xs:text-2xl sm:text-3xl mt-0' : 'text-3xl sm:text-4xl md:text-5xl mt-0.5'
+            screen === 'result' ? 'text-xl xs:text-2xl sm:text-3xl mt-0' : 'text-2xl xs:text-3xl sm:text-4xl md:text-5xl mt-0.5'
           }`}>
             Wartime Tuckshop
           </h1>
           {screen !== 'result' && (
-            <p className="font-serif italic text-[10.5px] xs:text-xs sm:text-sm text-ink-faded font-semibold leading-normal m-0">
+            <p className="font-serif italic text-[11px] xs:text-xs sm:text-sm text-ink-faded font-semibold leading-normal m-0">
               Discover Your WWII Food Personality
             </p>
           )}
