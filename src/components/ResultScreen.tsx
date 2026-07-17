@@ -133,15 +133,19 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
   };
 
   return (
-    <div ref={resultRef} className="flex flex-col gap-3 animate-stamp-in">
+    <div className="flex flex-col gap-3 animate-stamp-in">
       <p className="text-center font-serif italic text-[11px] sm:text-sm text-ink-faded uppercase tracking-[0.2em]">
         Your Food Personality is...
       </p>
 
       <div
+        ref={resultRef}
         className="relative bg-cream border border-border p-4 sm:p-6"
         style={{ '--result-color': result.color } as CSSProperties}
       >
+        <h2 className="font-serif text-lg sm:text-2xl font-extrabold text-center text-ink tracking-tight mb-2 sm:mb-3 leading-tight">
+          Wartime Tuckshop
+        </h2>
         <div className="relative mb-3 flex items-center justify-center bg-transparent h-28 sm:h-36 gap-2 sm:gap-3">
           {result.imgSrcs.map((src, idx) => (
             <img
@@ -201,9 +205,8 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
           <p className="text-[9px] sm:text-[11px] font-serif text-ink-faded italic leading-[1.6]">{result.fact}</p>
         </div>
 
-        <div className="flex justify-between items-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
+        <div className="flex justify-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
           <span>TF-NUS Heritage Champions Programme</span>
-          <span className="font-serif uppercase tracking-wider font-semibold">Wartime Tuckshop</span>
         </div>
       </div>
 
