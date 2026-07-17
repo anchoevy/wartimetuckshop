@@ -229,7 +229,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
             {result.traits.map((trait, i) => (
               <span
                 key={i}
-                className="font-serif text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.15em] px-2 py-0.5 border rounded-sm"
+                className="font-serif text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.15em] px-2 py-0.5 border rounded-sm whitespace-nowrap"
                 style={{ color: result.color, borderColor: `${result.color}50`, backgroundColor: `${result.color}08` }}
               >
                 {trait}
@@ -243,21 +243,21 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
 
           <div className="meta-grid mb-3 text-center bg-cream/50 border border-border/80 rounded-xs overflow-hidden" style={{ display: 'table', width: '100%', tableLayout: 'fixed' }}>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell p-2 sm:p-2.5 border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'middle' }}>
+              <div className="meta-cell p-2 sm:p-2.5 border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
                 <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Core Strength</span>
                 <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal">{result.strength}</span>
               </div>
-              <div className="meta-cell p-2 sm:p-2.5 border-b border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'middle' }}>
+              <div className="meta-cell p-2 sm:p-2.5 border-b border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
                 <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Natural Blindspot</span>
                 <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal">{result.weakness}</span>
               </div>
             </div>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell p-2 sm:p-2.5 border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'middle' }}>
+              <div className="meta-cell p-2 sm:p-2.5 border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
                 <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Pairs Well With</span>
                 <span className="block text-[9px] sm:text-[11px] font-serif font-bold leading-snug text-center whitespace-normal" style={{ color: result.color }}>{result.pairs}</span>
               </div>
-              <div className="meta-cell p-2 sm:p-2.5" style={{ display: 'table-cell', width: '50%', verticalAlign: 'middle' }}>
+              <div className="meta-cell p-2 sm:p-2.5" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
                 <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Clashes With</span>
                 <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug text-center whitespace-normal">{result.clashes}</span>
               </div>
