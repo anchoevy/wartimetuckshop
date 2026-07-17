@@ -35,45 +35,6 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     return new Blob([buf], { type: mime });
   };
 
-  const drawCardFallback = (): string | null => {
-    const el = resultRef.current;
-    if (!el) return null;
-
-    const rect = el.getBoundingClientRect();
-    const w = Math.round(rect.width);
-    const h = Math.round(rect.height);
-    const scale = 2;
-    const canvas = document.createElement('canvas');
-    canvas.width = w * scale;
-    canvas.height = h * scale;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
-
-    ctx.scale(scale, scale);
-    ctx.fillStyle = '#fdf6e8';
-    ctx.fillRect(0, 0, w, h);
-
-    const imgs = el.querySelectorAll('img');
-    const imgPromises = Array.from(imgs).map((img) => {
-      const i = img as HTMLImageElement;
-      if (i.complete && i.naturalWidth > 0) return Promise.resolve(i);
-      return new Promise<HTMLImageElement>((resolve) => {
-        i.onload = () => resolve(i);
-        i.onerror = () => resolve(i);
-      });
-    });
-    void Promise.all(imgPromises).then(() => {
-      for (const img of imgPromises) {
-        const i = img as unknown as HTMLImageElement;
-        const r = i.getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          ctx.drawImage(i, r.left - rect.left, r.top - rect.top, r.width, r.height);
-        }
-      }
-    });
-    return canvas.toDataURL('image/png');
-  };
-
   const captureCard = async (): Promise<string | null> => {
     if (!resultRef.current) return null;
 
@@ -85,7 +46,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     const imgs = el.querySelectorAll('img');
     await Promise.all(Array.from(imgs).map((img) => {
       const i = img as HTMLImageElement;
-      return i.complete && i.naturalWidth > 0
+      return (i.complete && i.naturalWidth > 0)
         ? Promise.resolve()
         : new Promise<void>((resolve) => { i.onload = () => resolve(); i.onerror = () => resolve(); });
     }));
@@ -93,16 +54,15 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     const animated = el.querySelectorAll<HTMLElement>('.animate-stamp-in, .transition-transform, .transition-all');
     animated.forEach((a) => { a.style.animation = 'none'; a.style.transition = 'none'; a.style.opacity = '1'; });
 
-    const cardWidth = el.offsetWidth;
-
     try {
-      return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8', width: cardWidth });
+      return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
     } catch {
       try {
-        const cvs = await domToCanvas(el, { scale: 2, backgroundColor: '#fdf6e8', width: cardWidth });
-        return cvs.toDataURL('image/png');
-      } catch {
-        return drawCardFallback();
+        const c = await domToCanvas(el, { scale: 2, backgroundColor: '#fdf6e8' });
+        return c.toDataURL('image/png');
+      } catch (e2) {
+        console.error('captureCard failed:', e2);
+        return null;
       }
     } finally {
       animated.forEach((a) => { a.style.animation = ''; a.style.transition = ''; a.style.opacity = ''; });
@@ -203,7 +163,6 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
               key={idx}
               src={src}
               alt={`${result.name} ${idx + 1}`}
-              crossOrigin="anonymous"
               className={`${result.imgSrcs.length > 1 ? 'max-w-[45%]' : 'max-w-[75%]'} h-full max-h-full object-contain`}
               referrerPolicy="no-referrer"
             />
