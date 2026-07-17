@@ -34,6 +34,17 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     await new Promise((resolve) => setTimeout(resolve, 120));
 
     const el = resultRef.current;
+
+    const imgs = el.querySelectorAll('img');
+    await Promise.all(Array.from(imgs).map((img) => {
+      const i = img as HTMLImageElement;
+      if (i.complete && i.naturalWidth > 0) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        i.onload = () => resolve();
+        i.onerror = () => resolve();
+      });
+    }));
+
     const animated = el.querySelectorAll<HTMLElement>(
       '.animate-stamp-in, .transition-transform, .transition-all'
     );
@@ -49,6 +60,9 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         backgroundColor: '#fdf6e8',
         type: 'image/png',
       });
+    } catch (err) {
+      console.error('modern-screenshot failed:', err);
+      return null;
     } finally {
       animated.forEach((a) => {
         a.style.animation = '';
@@ -99,7 +113,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
       triggerFeedback('Stamp card ready! Tap and hold to save to Instagram.');
     } catch (error) {
       console.error(error);
-      triggerFeedback('Could not generate card. Try taking a screenshot!');
+      triggerFeedback('Could not generate card. Try taking a screenshot of this page!');
     } finally {
       setIsExporting(false);
     }
@@ -152,6 +166,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
               key={idx}
               src={src}
               alt={`${result.name} ${idx + 1}`}
+              crossOrigin="anonymous"
               className={`${result.imgSrcs.length > 1 ? 'max-w-[45%]' : 'max-w-[75%]'} h-full max-h-full object-contain`}
               referrerPolicy="no-referrer"
             />
@@ -220,28 +235,28 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         <button
           onClick={handleShareOrSave}
           disabled={isExporting}
-          className="inline-flex items-center justify-center gap-1.5 w-full max-w-[280px] px-4 py-2.5 xs:py-3 sm:px-6 sm:py-3.5 font-serif text-[11px] xs:text-xs sm:text-sm font-bold tracking-wide text-cream bg-ink border border-ink rounded-sm cursor-pointer shadow-sm hover:bg-accent hover:border-accent hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+          className="inline-flex items-center justify-center gap-1.5 w-full px-5 py-3.5 sm:px-6 sm:py-3.5 min-h-[48px] font-serif text-sm xs:text-sm sm:text-sm font-bold tracking-wide text-cream bg-ink border border-ink rounded-sm cursor-pointer shadow-sm hover:bg-accent hover:border-accent hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
         >
-          <Share2 className="w-3.5 h-3.5" />
+          <Share2 className="w-4 h-4" />
           {isExporting ? 'Preparing card...' : 'Share Stamp Card'}
         </button>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
           {!isSharedResult && (
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200"
+              className="inline-flex items-center gap-1.5 font-serif text-[11px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200 min-h-[40px]"
             >
-              <Copy className="w-2.5 h-2.5" />
+              <Copy className="w-3 h-3" />
               Copy link
             </button>
           )}
 
           <button
             onClick={onRestart}
-            className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200"
+            className="inline-flex items-center gap-1.5 font-serif text-[11px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200 min-h-[40px]"
           >
-            <RotateCcw className="w-2.5 h-2.5" />
+            <RotateCcw className="w-3 h-3" />
             {isSharedResult ? 'Take the Quiz' : 'Retake'}
           </button>
 
@@ -249,9 +264,9 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
             href="https://www.instagram.com/wartime_tuckshop"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline transition-colors duration-200"
+            className="inline-flex items-center gap-1.5 font-serif text-[11px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline transition-colors duration-200 min-h-[40px]"
           >
-            <Instagram className="w-2.5 h-2.5" />
+            <Instagram className="w-3 h-3" />
             Follow us
           </a>
         </div>
