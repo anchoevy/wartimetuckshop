@@ -39,7 +39,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     if (!resultRef.current) return null;
 
     if (document.fonts?.ready) await document.fonts.ready;
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 800));
 
     const el = resultRef.current;
 
@@ -54,6 +54,10 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     const animated = el.querySelectorAll<HTMLElement>('.animate-stamp-in, .transition-transform, .transition-all');
     animated.forEach((a) => { a.style.animation = 'none'; a.style.transition = 'none'; a.style.opacity = '1'; });
 
+    const origWidth = el.style.width;
+    const cardW = el.offsetWidth;
+    el.style.width = cardW + 'px';
+
     try {
       return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
     } catch {
@@ -65,6 +69,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         return null;
       }
     } finally {
+      el.style.width = origWidth;
       animated.forEach((a) => { a.style.animation = ''; a.style.transition = ''; a.style.opacity = ''; });
     }
   };
@@ -192,22 +197,22 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
           {result.description}
         </p>
 
-        <div className="grid grid-cols-2 border border-border/80 mb-3 text-center divide-x divide-border/80">
-          <div className="p-2.5 sm:p-3 border-b border-border/80 flex flex-col items-center gap-1">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Strength</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.strength}</span>
+        <div className="grid grid-cols-2 border border-border/80 rounded-xs overflow-hidden mb-3 text-center bg-cream/50">
+          <div className="p-1.5 xs:p-2 sm:p-3 border-b border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
+            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Core Strength</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.strength}</span>
           </div>
-          <div className="p-2.5 sm:p-3 border-b border-border/80 flex flex-col items-center gap-1">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Blindspot</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.weakness}</span>
+          <div className="p-1.5 xs:p-2 sm:p-3 border-b border-border/85 flex flex-col items-center justify-center gap-0.5">
+            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Natural Blindspot</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.weakness}</span>
           </div>
-          <div className="p-2.5 sm:p-3 flex flex-col items-center gap-1">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Pairs With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight whitespace-nowrap" style={{ color: result.color }}>{result.pairs}</span>
+          <div className="p-1 xs:p-1.5 sm:p-2 border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
+            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Pairs Well With</span>
+            <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight text-center" style={{ color: result.color }}>{result.pairs}</span>
           </div>
-          <div className="p-2.5 sm:p-3 flex flex-col items-center gap-1">
+          <div className="p-1 xs:p-1.5 sm:p-2 flex flex-col items-center justify-center gap-0.5">
             <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Clashes With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.clashes}</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight text-center">{result.clashes}</span>
           </div>
         </div>
 
@@ -216,8 +221,9 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
           <p className="text-[9px] sm:text-[11px] font-serif text-ink-faded italic leading-[1.6]">{result.fact}</p>
         </div>
 
-        <div className="flex justify-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
-          <span className="whitespace-nowrap">TF-NUS Heritage Champions Programme</span>
+        <div className="flex justify-between items-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
+          <span>TF-NUS Heritage Champions Programme</span>
+          <span className="font-serif uppercase tracking-wider font-semibold">Wartime Tuckshop</span>
         </div>
       </div>
 
