@@ -94,7 +94,7 @@ export const personalities: PersonalityResult[] = [
     imgSrcs: [tapiocaImg, tapioca2Img],
     traits: ["Adaptable", "Resilient", "Self-sufficient"],
     description: "You are driven by a quiet and unyielding spirit that focuses on practical progress under pressure.",
-    strength: "High resilience; excels at working independently under pressure.",
+    strength: "Excels at working independently under pressure.",
     weakness: "Reluctance to ask for help when managing tough situations.",
     pairs: "Ikan Bilis",
     clashes: "Ragi Roti",
@@ -108,9 +108,9 @@ export const personalities: PersonalityResult[] = [
     imgSrcs: [ragiRotiImg],
     traits: ["Generous", "Loyal", "Communal"],
     description: "Your personality is anchored in empathy and group cooperation. For you, teamwork makes the dream work.",
-    strength: "Excellent at coordinating teams and uniting groups with empathy.",
-    weakness: "May neglect your own needs due to generous support of others.",
-    pairs: "Lemak Kangkong & Sweet Potatoes",
+    strength: "Excellent at coordinating teams and uniting people.",
+    weakness: "May neglect your own needs when supporting others.",
+    pairs: "Lemak Kangkong &\nSweet Potatoes",
     clashes: "Tapioca",
     fact: "Ragi (finger millet) was also another staple during the war. It was often used to make breads or porridge."
   },
@@ -139,7 +139,7 @@ export const personalities: PersonalityResult[] = [
     strength: "Pragmatic planning with clear backup options for any hurdle.",
     weakness: "Highly realistic approach may seem emotionally reserved.",
     pairs: "Tapioca",
-    clashes: "Lemak Kangkong & Sweet Potatoes",
+    clashes: "Lemak Kangkong &\nSweet Potatoes",
     fact: "Coastal communities often caught fish and salted them for preservation. Ikan bilis could be fried or used in soup stock, making it a versatile ingredient in wartime cooking."
   },
   {
@@ -150,8 +150,8 @@ export const personalities: PersonalityResult[] = [
     imgSrcs: [rojakImg],
     traits: ["Creative", "Versatile", "Inclusive"],
     description: "You correspond to a balanced mix of multiple traits,\nmaking you unique.",
-    strength: "Creative, versatile, and excellent at collaborating with diverse groups.",
-    weakness: "Can find it challenging to focus and settle on a single path.",
+    strength: "Capable of collaborating with diverse groups.",
+    weakness: "Can find it challenging to focus on a single path.",
     pairs: "Everyone",
     clashes: "No one",
     fact: "Interestingly developed by British prisoners of war, the wartime rojak bears a curious mix of vegetables such as beetroot and cucumber, mixed with an untraditional rojak sauce of potatoes and tomatoes."
