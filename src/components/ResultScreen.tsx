@@ -243,23 +243,39 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
 
           <div className="meta-grid mb-3 text-center bg-cream/50 border border-border/80 rounded-xs overflow-hidden" style={{ display: 'table', width: '100%', tableLayout: 'fixed' }}>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell p-2 sm:p-2.5 border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
-                <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Core Strength</span>
-                <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal">{result.strength}</span>
+              <div className="meta-cell border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0 }}>
+                <div className="flex flex-col h-full p-2 sm:p-2.5">
+                  <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Core Strength</span>
+                  <div className="flex-1 flex items-center justify-center">
+                    <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal text-center">{result.strength}</span>
+                  </div>
+                </div>
               </div>
-              <div className="meta-cell p-2 sm:p-2.5 border-b border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
-                <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Natural Blindspot</span>
-                <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal">{result.weakness}</span>
+              <div className="meta-cell border-b border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0 }}>
+                <div className="flex flex-col h-full p-2 sm:p-2.5">
+                  <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Natural Blindspot</span>
+                  <div className="flex-1 flex items-center justify-center">
+                    <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal text-center">{result.weakness}</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell p-2 sm:p-2.5 border-r border-border/85" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
-                <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Pairs Well With</span>
-                <span className="block text-[9px] sm:text-[11px] font-serif font-bold leading-snug text-center whitespace-normal" style={{ color: result.color }}>{result.pairs}</span>
+              <div className="meta-cell border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0 }}>
+                <div className="flex flex-col h-full p-2 sm:p-2.5">
+                  <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Pairs Well With</span>
+                  <div className="flex-1 flex items-center justify-center">
+                    <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-snug whitespace-pre-line text-center" style={{ color: result.color }}>{result.pairs}</span>
+                  </div>
+                </div>
               </div>
-              <div className="meta-cell p-2 sm:p-2.5" style={{ display: 'table-cell', width: '50%', verticalAlign: 'top' }}>
-                <span className="block text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap">Clashes With</span>
-                <span className="block text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug text-center whitespace-normal">{result.clashes}</span>
+              <div className="meta-cell" style={{ display: 'table-cell', width: '50%', padding: 0 }}>
+                <div className="flex flex-col h-full p-2 sm:p-2.5">
+                  <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Clashes With</span>
+                  <div className="flex-1 flex items-center justify-center">
+                    <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-pre-line text-center">{result.clashes}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
