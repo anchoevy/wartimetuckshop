@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import StartScreen from './components/StartScreen';
 import QuizScreen from './components/QuizScreen';
 import ResultScreen from './components/ResultScreen';
-import { quizData, personalities, LOGO_PATH } from './data';
+import { quizData, personalities } from './data';
 import { PersonalityResult } from './types';
 
 export default function App() {
