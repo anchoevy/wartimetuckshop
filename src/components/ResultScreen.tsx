@@ -1,6 +1,6 @@
 import { useRef, useState, type CSSProperties } from 'react';
 import { Share2, Copy, RotateCcw, Instagram, X } from 'lucide-react';
-import { domToBlob } from 'modern-screenshot';
+import { domToPng, domToCanvas } from 'modern-screenshot';
 import { motion } from 'motion/react';
 import { PersonalityResult } from '../types';
 
@@ -25,50 +25,47 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     setTimeout(() => setFeedback(''), 3000);
   };
 
-  const renderCardBlob = async (): Promise<Blob | null> => {
+  const dataUrlToBlob = (dataUrl: string): Blob => {
+    const parts = dataUrl.split(',');
+    const mime = parts[0].match(/:(.*?);/)![1];
+    const raw = atob(parts[1]);
+    const len = raw.length;
+    const buf = new Uint8Array(len);
+    for (let i = 0; i < len; i++) buf[i] = raw.charCodeAt(i);
+    return new Blob([buf], { type: mime });
+  };
+
+  const captureCard = async (): Promise<string | null> => {
     if (!resultRef.current) return null;
 
-    if (document.fonts && document.fonts.ready) {
-      await document.fonts.ready;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 120));
+    if (document.fonts?.ready) await document.fonts.ready;
+    await new Promise((r) => setTimeout(r, 500));
 
     const el = resultRef.current;
 
     const imgs = el.querySelectorAll('img');
     await Promise.all(Array.from(imgs).map((img) => {
       const i = img as HTMLImageElement;
-      if (i.complete && i.naturalWidth > 0) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        i.onload = () => resolve();
-        i.onerror = () => resolve();
-      });
+      return i.complete && i.naturalWidth > 0
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => { i.onload = () => resolve(); i.onerror = () => resolve(); });
     }));
 
-    const animated = el.querySelectorAll<HTMLElement>(
-      '.animate-stamp-in, .transition-transform, .transition-all'
-    );
-    animated.forEach((a) => {
-      a.style.animation = 'none';
-      a.style.transition = 'none';
-      a.style.opacity = '1';
-    });
+    const animated = el.querySelectorAll<HTMLElement>('.animate-stamp-in, .transition-transform, .transition-all');
+    animated.forEach((a) => { a.style.animation = 'none'; a.style.transition = 'none'; a.style.opacity = '1'; });
 
     try {
-      return await domToBlob(el, {
-        scale: 2,
-        backgroundColor: '#fdf6e8',
-        type: 'image/png',
-      });
-    } catch (err) {
-      console.error('modern-screenshot failed:', err);
-      return null;
+      return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
+    } catch {
+      try {
+        const canvas = await domToCanvas(el, { scale: 2, backgroundColor: '#fdf6e8' });
+        return canvas.toDataURL('image/png');
+      } catch (e2) {
+        console.error('captureCard failed:', e2);
+        return null;
+      }
     } finally {
-      animated.forEach((a) => {
-        a.style.animation = '';
-        a.style.transition = '';
-        a.style.opacity = '';
-      });
+      animated.forEach((a) => { a.style.animation = ''; a.style.transition = ''; a.style.opacity = ''; });
     }
   };
 
@@ -77,9 +74,10 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     triggerFeedback('Stamping your card...');
 
     try {
-      const blob = await renderCardBlob();
-      if (!blob) throw new Error('Card element not ready');
+      const dataUrl = await captureCard();
+      if (!dataUrl) throw new Error('Card rendering failed');
 
+      const blob = dataUrlToBlob(dataUrl);
       const file = new File([blob], `wartime-tuckshop-${result.id}.png`, { type: 'image/png' });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -95,19 +93,18 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         }
       }
 
-      const blobUrl = URL.createObjectURL(blob);
-      setExportedImgUrl(blobUrl);
+      setExportedImgUrl(dataUrl);
       setShowSaveModal(true);
 
       try {
-        const downloadLink = document.createElement('a');
-        downloadLink.download = `wartime-tuckshop-${result.id}.png`;
-        downloadLink.href = blobUrl;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        const a = document.createElement('a');
+        a.download = `wartime-tuckshop-${result.id}.png`;
+        a.href = dataUrl;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       } catch (dlErr) {
-        console.warn('Direct programmatic download prevented by sandbox constraints', dlErr);
+        console.warn('Direct download prevented:', dlErr);
       }
 
       triggerFeedback('Stamp card ready! Tap and hold to save to Instagram.');
