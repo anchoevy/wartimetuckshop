@@ -165,15 +165,15 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
 
   return (
     <div className="flex flex-col gap-3 animate-stamp-in">
-      <p className="text-center font-serif italic text-[11px] sm:text-sm text-ink-faded uppercase tracking-[0.2em]">
-        Your Food Personality is...
-      </p>
+      <div ref={resultRef} className="flex flex-col gap-3">
+        <p className="text-center font-serif italic text-[11px] sm:text-sm text-ink-faded uppercase tracking-[0.2em]">
+          Your Food Personality is...
+        </p>
 
-      <div
-        ref={resultRef}
-        className="relative bg-cream border border-border p-4 sm:p-6"
-        style={{ '--result-color': result.color } as CSSProperties}
-      >
+        <div
+          className="relative bg-cream border border-border p-4 sm:p-6"
+          style={{ '--result-color': result.color } as CSSProperties}
+        >
         <h2 className="font-serif text-lg sm:text-2xl font-extrabold text-center text-ink tracking-tight mb-2 sm:mb-3 leading-tight">
           Wartime Tuckshop
         </h2>
@@ -242,11 +242,12 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         </div>
       </div>
 
-      {!isSharedResult && (
-        <p className="text-center font-serif italic text-[9px] sm:text-[10px] text-ink-faded -mt-1 leading-none">
-          Save the stamp card to share on your social stories!
-        </p>
-      )}
+        {!isSharedResult && (
+          <p className="text-center font-serif italic text-[9px] sm:text-[10px] text-ink-faded -mt-1 leading-none">
+            Save the stamp card to share on your social stories!
+          </p>
+        )}
+      </div>
 
       <div className="pt-2.5 sm:pt-3 border-t border-border/45 flex flex-col items-center gap-2 sm:gap-2.5">
         <button
