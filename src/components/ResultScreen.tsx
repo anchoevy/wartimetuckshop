@@ -39,7 +39,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     if (!resultRef.current) return null;
 
     if (document.fonts?.ready) await document.fonts.ready;
-    await new Promise((r) => setTimeout(r, 800));
+    await new Promise((r) => setTimeout(r, 500));
 
     const el = resultRef.current;
 
@@ -60,18 +60,53 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     restorers.push(() => { el.style.width = ''; });
     el.style.width = cardW + 'px';
 
-    const fixGrid = (sel: string) => {
-      const cells = el.querySelectorAll<HTMLElement>(sel);
-      cells.forEach((c) => {
-        const h = c.offsetHeight;
-        if (h > 0) {
-          const origH = c.style.height;
-          restorers.push(() => { c.style.height = origH; });
-          c.style.height = h + 'px';
-        }
+    const gridCells = el.querySelectorAll<HTMLElement>('.meta-grid > div');
+    gridCells.forEach((c) => {
+      const h = c.offsetHeight;
+      if (h > 0) {
+        const origH = c.style.height;
+        const origMinH = c.style.minHeight;
+        const origFlex = c.style.flex;
+        const origDisplay = c.style.display;
+        const origFlexDir = c.style.flexDirection;
+        const origAlign = c.style.alignItems;
+        const origJustify = c.style.justifyContent;
+        restorers.push(() => {
+          c.style.height = origH;
+          c.style.minHeight = origMinH;
+          c.style.flex = origFlex;
+          c.style.display = origDisplay;
+          c.style.flexDirection = origFlexDir;
+          c.style.alignItems = origAlign;
+          c.style.justifyContent = origJustify;
+        });
+        c.style.height = h + 'px';
+        c.style.minHeight = h + 'px';
+        c.style.flex = 'none';
+        c.style.display = 'flex';
+        c.style.flexDirection = 'column';
+        c.style.alignItems = 'center';
+        c.style.justifyContent = 'center';
+      }
+    });
+
+    const gridEl = el.querySelector<HTMLElement>('.meta-grid');
+    if (gridEl) {
+      const gh = gridEl.offsetHeight;
+      const origGH = gridEl.style.height;
+      const origGDisplay = gridEl.style.display;
+      const origGGridTemplate = gridEl.style.gridTemplateRows;
+      restorers.push(() => {
+        gridEl.style.height = origGH;
+        gridEl.style.display = origGDisplay;
+        gridEl.style.gridTemplateRows = origGGridTemplate;
       });
-    };
-    fixGrid('.grid div');
+      if (gh > 0) {
+        gridEl.style.height = gh + 'px';
+        gridEl.style.display = 'grid';
+        gridEl.style.gridTemplateRows = '1fr 1fr';
+      }
+    }
 
     try {
       return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
@@ -157,7 +192,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     try {
       document.execCommand('copy');
       triggerFeedback('Link copied to clipboard.');
-    } catch (err) {
+    } catch {
       triggerFeedback('Could not copy link.');
     }
     document.body.removeChild(textarea);
@@ -171,76 +206,80 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         </p>
 
         <div
-          className="relative bg-cream border border-border p-4 sm:p-6"
-          style={{ '--result-color': result.color } as CSSProperties}
+          className="relative bg-cream p-4 sm:p-6"
+          style={{
+            '--result-color': result.color,
+            border: '3px double var(--color-border)',
+          } as CSSProperties}
         >
-        <h2 className="font-serif text-lg sm:text-2xl font-extrabold text-center text-ink tracking-tight mb-2 sm:mb-3 leading-tight">
-          Wartime Tuckshop
-        </h2>
-        <div className="relative mb-3 flex items-center justify-center bg-transparent h-28 sm:h-36 gap-2 sm:gap-3">
-          {result.imgSrcs.map((src, idx) => (
-            <img
-              key={idx}
-              src={src}
-              alt={`${result.name} ${idx + 1}`}
-              className={`${result.imgSrcs.length > 1 ? 'max-w-[45%]' : 'max-w-[75%]'} h-full max-h-full object-contain`}
-              referrerPolicy="no-referrer"
-            />
-          ))}
-        </div>
+          <h2 className="font-serif text-lg sm:text-2xl font-extrabold text-center text-ink tracking-tight mb-2 sm:mb-3 leading-tight">
+            Wartime Tuckshop
+          </h2>
 
-        <h2
-          className="font-serif text-lg sm:text-2xl md:text-3xl font-extrabold text-center mb-2 tracking-tight"
-          style={{ color: result.color }}
-        >
-          {result.name}
-        </h2>
-
-        <div className="flex justify-center flex-wrap gap-1.5 mb-3">
-          {result.traits.map((trait, i) => (
-            <span
-              key={i}
-              className="font-serif text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.15em] px-2 py-0.5 border rounded-sm"
-              style={{ color: result.color, borderColor: `${result.color}50`, backgroundColor: `${result.color}08` }}
-            >
-              {trait}
-            </span>
-          ))}
-        </div>
-
-        <p className="font-serif text-[11px] sm:text-[13px] leading-[1.7] text-ink-light mb-3 text-center whitespace-pre-line px-1">
-          {result.description}
-        </p>
-
-        <div className="grid grid-cols-2 border border-border/80 rounded-xs overflow-hidden mb-3 text-center bg-cream/50">
-          <div className="p-1.5 xs:p-2 sm:p-3 border-b border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Core Strength</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.strength}</span>
+          <div className="relative mb-3 flex items-center justify-center bg-transparent h-24 sm:h-32 gap-2 sm:gap-3">
+            {result.imgSrcs.map((src, idx) => (
+              <img
+                key={idx}
+                src={src}
+                alt={`${result.name} ${idx + 1}`}
+                className={`${result.imgSrcs.length > 1 ? 'max-w-[45%]' : 'max-w-[75%]'} h-full max-h-full object-contain`}
+                referrerPolicy="no-referrer"
+              />
+            ))}
           </div>
-          <div className="p-1.5 xs:p-2 sm:p-3 border-b border-border/85 flex flex-col items-center justify-center gap-0.5">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Natural Blindspot</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.weakness}</span>
-          </div>
-          <div className="p-1 xs:p-1.5 sm:p-2 border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Pairs Well With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight text-center" style={{ color: result.color }}>{result.pairs}</span>
-          </div>
-          <div className="p-1 xs:p-1.5 sm:p-2 flex flex-col items-center justify-center gap-0.5">
-            <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Clashes With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight text-center">{result.clashes}</span>
-          </div>
-        </div>
 
-        <div className="bg-paper/40 border-l-2 border-accent/40 p-2.5 sm:p-3 mb-2">
-          <p className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.15em] mb-1">Food Fact</p>
-          <p className="text-[9px] sm:text-[11px] font-serif text-ink-faded italic leading-[1.6]">{result.fact}</p>
-        </div>
+          <h2
+            className="font-serif text-lg sm:text-2xl md:text-3xl font-extrabold text-center mb-2 tracking-tight"
+            style={{ color: result.color }}
+          >
+            {result.name}
+          </h2>
 
-        <div className="flex justify-between items-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
-          <span>TF-NUS Heritage Champions Programme</span>
-          <span className="font-serif uppercase tracking-wider font-semibold">Wartime Tuckshop</span>
+          <div className="flex justify-center flex-wrap gap-1.5 mb-3">
+            {result.traits.map((trait, i) => (
+              <span
+                key={i}
+                className="font-serif text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.15em] px-2 py-0.5 border rounded-sm"
+                style={{ color: result.color, borderColor: `${result.color}50`, backgroundColor: `${result.color}08` }}
+              >
+                {trait}
+              </span>
+            ))}
+          </div>
+
+          <p className="font-serif text-[11px] sm:text-[13px] leading-[1.7] text-ink-light mb-3 text-center whitespace-pre-line px-1">
+            {result.description}
+          </p>
+
+          <div className="meta-grid grid grid-cols-2 border border-border/80 rounded-xs overflow-hidden mb-3 text-center bg-cream/50">
+            <div className="p-1.5 sm:p-2 border-b border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
+              <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight">Core Strength</span>
+              <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.strength}</span>
+            </div>
+            <div className="p-1.5 sm:p-2 border-b border-border/85 flex flex-col items-center justify-center gap-0.5">
+              <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight">Natural Blindspot</span>
+              <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.weakness}</span>
+            </div>
+            <div className="p-1.5 sm:p-2 border-r border-border/85 flex flex-col items-center justify-center gap-0.5">
+              <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight">Pairs Well With</span>
+              <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight text-center" style={{ color: result.color }}>{result.pairs}</span>
+            </div>
+            <div className="p-1.5 sm:p-2 flex flex-col items-center justify-center gap-0.5">
+              <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight">Clashes With</span>
+              <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight text-center">{result.clashes}</span>
+            </div>
+          </div>
+
+          <div className="bg-paper/40 border-l-2 border-accent/40 p-2.5 sm:p-3 mb-2">
+            <p className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.15em] mb-1">Food Fact</p>
+            <p className="text-[9px] sm:text-[11px] font-serif text-ink-faded italic leading-[1.6]">{result.fact}</p>
+          </div>
+
+          <div className="flex justify-between items-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
+            <span>TF-NUS Heritage Champions Programme</span>
+            <span className="font-serif uppercase tracking-wider font-semibold">Wartime Tuckshop</span>
+          </div>
         </div>
-      </div>
 
         {!isSharedResult && (
           <p className="text-center font-serif italic text-[9px] sm:text-[10px] text-ink-faded -mt-1 leading-none">
