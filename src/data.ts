@@ -110,7 +110,7 @@ export const personalities: PersonalityResult[] = [
     description: "Your personality is anchored in empathy and group cooperation. For you, teamwork makes the dream work.",
     strength: "Excellent at coordinating teams and uniting people.",
     weakness: "May neglect your own needs when supporting others.",
-    pairs: "Lemak Kangkong &\nSweet Potatoes",
+    pairs: "Lemak Kangkong & Sweet Potatoes",
     clashes: "Tapioca",
     fact: "Ragi (finger millet) was also another staple during the war. It was often used to make breads or porridge."
   },
@@ -139,7 +139,7 @@ export const personalities: PersonalityResult[] = [
     strength: "Pragmatic planning with clear backup options for any hurdle.",
     weakness: "Highly realistic approach may seem emotionally reserved.",
     pairs: "Tapioca",
-    clashes: "Lemak Kangkong &\nSweet Potatoes",
+    clashes: "Lemak Kangkong & Sweet Potatoes",
     fact: "Coastal communities often caught fish and salted them for preservation. Ikan bilis could be fried or used in soup stock, making it a versatile ingredient in wartime cooking."
   },
   {
