@@ -35,6 +35,45 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     return new Blob([buf], { type: mime });
   };
 
+  const drawCardFallback = (): string | null => {
+    const el = resultRef.current;
+    if (!el) return null;
+
+    const rect = el.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    const scale = 2;
+    const canvas = document.createElement('canvas');
+    canvas.width = w * scale;
+    canvas.height = h * scale;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#fdf6e8';
+    ctx.fillRect(0, 0, w, h);
+
+    const imgs = el.querySelectorAll('img');
+    const imgPromises = Array.from(imgs).map((img) => {
+      const i = img as HTMLImageElement;
+      if (i.complete && i.naturalWidth > 0) return Promise.resolve(i);
+      return new Promise<HTMLImageElement>((resolve) => {
+        i.onload = () => resolve(i);
+        i.onerror = () => resolve(i);
+      });
+    });
+    void Promise.all(imgPromises).then(() => {
+      for (const img of imgPromises) {
+        const i = img as unknown as HTMLImageElement;
+        const r = i.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) {
+          ctx.drawImage(i, r.left - rect.left, r.top - rect.top, r.width, r.height);
+        }
+      }
+    });
+    return canvas.toDataURL('image/png');
+  };
+
   const captureCard = async (): Promise<string | null> => {
     if (!resultRef.current) return null;
 
@@ -54,15 +93,16 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     const animated = el.querySelectorAll<HTMLElement>('.animate-stamp-in, .transition-transform, .transition-all');
     animated.forEach((a) => { a.style.animation = 'none'; a.style.transition = 'none'; a.style.opacity = '1'; });
 
+    const cardWidth = el.offsetWidth;
+
     try {
-      return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
+      return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8', width: cardWidth });
     } catch {
       try {
-        const canvas = await domToCanvas(el, { scale: 2, backgroundColor: '#fdf6e8' });
-        return canvas.toDataURL('image/png');
-      } catch (e2) {
-        console.error('captureCard failed:', e2);
-        return null;
+        const cvs = await domToCanvas(el, { scale: 2, backgroundColor: '#fdf6e8', width: cardWidth });
+        return cvs.toDataURL('image/png');
+      } catch {
+        return drawCardFallback();
       }
     } finally {
       animated.forEach((a) => { a.style.animation = ''; a.style.transition = ''; a.style.opacity = ''; });
@@ -196,19 +236,19 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         <div className="grid grid-cols-2 border border-border/80 mb-3 text-center divide-x divide-border/80">
           <div className="p-2.5 sm:p-3 border-b border-border/80 flex flex-col items-center gap-1">
             <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Strength</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.strength}</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.strength}</span>
           </div>
           <div className="p-2.5 sm:p-3 border-b border-border/80 flex flex-col items-center gap-1">
             <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Blindspot</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.weakness}</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.weakness}</span>
           </div>
           <div className="p-2.5 sm:p-3 flex flex-col items-center gap-1">
             <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Pairs With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight" style={{ color: result.color }}>{result.pairs}</span>
+            <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-tight whitespace-nowrap" style={{ color: result.color }}>{result.pairs}</span>
           </div>
           <div className="p-2.5 sm:p-3 flex flex-col items-center gap-1">
             <span className="text-[6.5px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em]">Clashes With</span>
-            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight">{result.clashes}</span>
+            <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-tight whitespace-nowrap">{result.clashes}</span>
           </div>
         </div>
 
@@ -218,7 +258,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         </div>
 
         <div className="flex justify-center pt-2 border-t border-border/50 text-[6.5px] sm:text-[8px] text-ink-faded">
-          <span>TF-NUS Heritage Champions Programme</span>
+          <span className="whitespace-nowrap">TF-NUS Heritage Champions Programme</span>
         </div>
       </div>
 
