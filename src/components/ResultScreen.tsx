@@ -202,10 +202,6 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
             border: '3px double var(--color-border)',
           } as CSSProperties}
         >
-          <h2 className="font-serif text-lg sm:text-2xl font-extrabold text-center text-ink tracking-tight mb-2 sm:mb-3 leading-tight">
-            Wartime Tuckshop
-          </h2>
-
           <div className="relative mb-3 flex items-center justify-center bg-transparent h-24 sm:h-32 gap-2 sm:gap-3">
             {result.imgSrcs.map((src, idx) => (
               <img
