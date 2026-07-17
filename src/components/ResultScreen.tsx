@@ -54,9 +54,24 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
     const animated = el.querySelectorAll<HTMLElement>('.animate-stamp-in, .transition-transform, .transition-all');
     animated.forEach((a) => { a.style.animation = 'none'; a.style.transition = 'none'; a.style.opacity = '1'; });
 
-    const origWidth = el.style.width;
+    const restorers: (() => void)[] = [];
+
     const cardW = el.offsetWidth;
+    restorers.push(() => { el.style.width = ''; });
     el.style.width = cardW + 'px';
+
+    const fixGrid = (sel: string) => {
+      const cells = el.querySelectorAll<HTMLElement>(sel);
+      cells.forEach((c) => {
+        const h = c.offsetHeight;
+        if (h > 0) {
+          const origH = c.style.height;
+          restorers.push(() => { c.style.height = origH; });
+          c.style.height = h + 'px';
+        }
+      });
+    };
+    fixGrid('.grid div');
 
     try {
       return await domToPng(el, { scale: 2, backgroundColor: '#fdf6e8' });
@@ -69,7 +84,7 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
         return null;
       }
     } finally {
-      el.style.width = origWidth;
+      restorers.forEach((r) => r());
       animated.forEach((a) => { a.style.animation = ''; a.style.transition = ''; a.style.opacity = ''; });
     }
   };
