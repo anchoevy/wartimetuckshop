@@ -246,16 +246,16 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
 
           <div className="meta-grid mb-3 text-center bg-cream/50 border border-border/80 rounded-xs overflow-hidden" style={{ display: 'table', width: '100%', tableLayout: 'fixed' }}>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '70px' }}>
-                <div className="flex flex-col h-full p-2 sm:p-2.5">
+              <div className="meta-cell border-b border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '52px' }}>
+                <div className="flex flex-col h-full p-1.5 sm:p-2">
                   <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Core Strength</span>
                   <div className="flex-1 flex items-center justify-center">
                     <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal text-center">{result.strength}</span>
                   </div>
                 </div>
               </div>
-              <div className="meta-cell border-b border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '70px' }}>
-                <div className="flex flex-col h-full p-2 sm:p-2.5">
+              <div className="meta-cell border-b border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '52px' }}>
+                <div className="flex flex-col h-full p-1.5 sm:p-2">
                   <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Natural Blindspot</span>
                   <div className="flex-1 flex items-center justify-center">
                     <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug whitespace-normal text-center">{result.weakness}</span>
@@ -264,16 +264,16 @@ export default function ResultScreen({ result, onRestart, isSharedResult }: Resu
               </div>
             </div>
             <div style={{ display: 'table-row' }}>
-              <div className="meta-cell border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '70px' }}>
-                <div className="flex flex-col h-full p-2 sm:p-2.5">
+              <div className="meta-cell border-r border-border/85" style={{ display: 'table-cell', width: '50%', padding: 0, height: '52px' }}>
+                <div className="flex flex-col h-full p-1.5 sm:p-2">
                   <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Pairs Well With</span>
                   <div className="flex-1 flex items-center justify-center">
                     <span className="text-[9px] sm:text-[11px] font-serif font-bold leading-snug text-center" style={{ color: result.color }}>{renderPairsClashes(result.pairs)}</span>
                   </div>
                 </div>
               </div>
-              <div className="meta-cell" style={{ display: 'table-cell', width: '50%', padding: 0, height: '70px' }}>
-                <div className="flex flex-col h-full p-2 sm:p-2.5">
+              <div className="meta-cell" style={{ display: 'table-cell', width: '50%', padding: 0, height: '52px' }}>
+                <div className="flex flex-col h-full p-1.5 sm:p-2">
                   <span className="text-[7px] sm:text-[8px] font-sans font-bold text-accent uppercase tracking-[0.2em] leading-tight whitespace-nowrap text-center">Clashes With</span>
                   <div className="flex-1 flex items-center justify-center">
                     <span className="text-[9px] sm:text-[11px] font-serif text-ink-light leading-snug text-center">{renderPairsClashes(result.clashes)}</span>
