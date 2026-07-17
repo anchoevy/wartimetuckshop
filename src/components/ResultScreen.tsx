@@ -4,8 +4,8 @@
  */
 
 import React, { useRef, useState } from 'react';
-import { Download, Share2, Copy, RotateCcw, Instagram, X } from 'lucide-react';
-import html2canvas from 'html2canvas';
+import { Share2, Copy, RotateCcw, Instagram, X } from 'lucide-react';
+import { domToBlob } from 'modern-screenshot';
 import { motion } from 'motion/react';
 import { PersonalityResult } from '../types';
 
@@ -29,20 +29,108 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
     setTimeout(() => setFeedback(''), 3000);
   };
 
-  const handleSharePrimary = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Wartime Tuckshop',
-          text: shareText,
-          url: shareUrl,
+  // Renders the stamp card to a PNG blob. Waits for webfonts to finish
+  // loading first — capturing before Lora/Playfair Display are ready is
+  // a common cause of exports falling back to a system serif mid-render,
+  // which throws off glyph widths and reads as squished/overlapping
+  // letters (a kerning-looking bug that isn't really a kerning setting).
+  //
+  // Uses `modern-screenshot` rather than html2canvas. html2canvas works by
+  // re-parsing every stylesheet's CSS text itself, and this project's
+  // Tailwind v4 build emits modern syntax (nested rules, `@layer`,
+  // `color-mix()` for the `/opacity` utilities) that html2canvas's parser
+  // chokes on — when that happens it silently drops the whole sheet, so
+  // the export comes out as unstyled, top-to-bottom stacked text instead
+  // of the actual card. modern-screenshot instead walks the live DOM and
+  // copies each element's already-resolved `getComputedStyle()` values, so
+  // it doesn't care what CSS syntax produced them and the export matches
+  // exactly what's on screen.
+  const renderCardBlob = async (): Promise<Blob | null> => {
+    if (!cardRef.current) return null;
+
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+    // One extra frame so layout has fully settled after the font swap.
+    await new Promise((resolve) => setTimeout(resolve, 60));
+
+    return domToBlob(cardRef.current, {
+      scale: 2, // Retina-quality export
+      backgroundColor: '#fdf6e8',
+      onCloneNode: (cloned) => {
+        if (!(cloned instanceof HTMLElement)) return;
+
+        cloned.style.boxShadow = 'none';
+
+        // Strip transition/animation/hover classes and any in-flight
+        // transform so the export isn't captured mid-animation.
+        const animatedElements = cloned.querySelectorAll<HTMLElement>(
+          '.animate-stamp-in, .transition-transform, .transition-all'
+        );
+        animatedElements.forEach((el) => {
+          el.classList.remove('animate-stamp-in', 'transition-transform', 'transition-all', 'hover:scale-105');
+          el.style.transform = 'none';
+          el.style.animation = 'none';
+          el.style.opacity = '1';
         });
-      } catch (err) {
-        // User cancelled, ignore
+      },
+    });
+  };
+
+  // Single share/save action, used by the one primary button. On mobile,
+  // this shares the actual card *image* through the native share sheet
+  // (Web Share API Level 2 with files) — that's what makes "Instagram"
+  // appear as a target with a Stories option, since a plain link/text
+  // share never reaches the Stories composer. Wherever file-sharing isn't
+  // supported (most desktop browsers), it falls back to downloading the
+  // card and showing a preview the user can save manually.
+  const handleShareOrSave = async () => {
+    setIsExporting(true);
+    triggerFeedback('Stamping your card...');
+
+    try {
+      const blob = await renderCardBlob();
+      if (!blob) throw new Error('Card element not ready');
+
+      const file = new File([blob], `wartime-tuckshop-${result.id}.png`, { type: 'image/png' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Wartime Tuckshop', text: shareText });
+          setFeedback('');
+          return;
+        } catch (err) {
+          // AbortError = user cancelled the share sheet, not a failure —
+          // don't fall through to the download flow in that case.
+          if ((err as Error)?.name === 'AbortError') {
+            setFeedback('');
+            return;
+          }
+        }
       }
-    } else {
-      // Desktop / Web share fallback
-      handleCopyLink();
+
+      // Fallback: download the card and show a preview for manual saving.
+      const blobUrl = URL.createObjectURL(blob);
+      setExportedImgUrl(blobUrl);
+      setShowSaveModal(true);
+
+      try {
+        const downloadLink = document.createElement('a');
+        downloadLink.download = `wartime-tuckshop-${result.id}.png`;
+        downloadLink.href = blobUrl;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      } catch (dlErr) {
+        console.warn('Direct programmatic download prevented by sandbox constraints', dlErr);
+      }
+
+      triggerFeedback('Stamp card ready! Tap and hold to save to Instagram.');
+    } catch (error) {
+      console.error(error);
+      triggerFeedback('Could not generate card. Try taking a screenshot!');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -71,61 +159,6 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
       triggerFeedback('Could not copy link.');
     }
     document.body.removeChild(textarea);
-  };
-
-  const handleSaveCard = async () => {
-    if (!cardRef.current) return;
-    setIsExporting(true);
-    triggerFeedback('Stamping your card...');
-
-    try {
-      // Small timeout to give DOM a frame to refresh and stabilize
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const canvas = await html2canvas(cardRef.current, {
-        scale: 2, // Retinal high-def export
-        useCORS: true, // Allow cross-origin images 
-        backgroundColor: '#fdf6e8', // Keep matching vintage background
-        logging: false,
-        onclone: (clonedDoc) => {
-          const clonedCard = clonedDoc.getElementById('result-card');
-          if (clonedCard) {
-            clonedCard.style.boxShadow = 'none';
-            // Strip any transition/animation classes that can freeze or distort html2canvas
-            const animatedElements = clonedCard.querySelectorAll('.animate-stamp-in, .transition-transform, .transition-all');
-            animatedElements.forEach((el) => {
-              el.classList.remove('animate-stamp-in');
-              el.classList.remove('transition-transform');
-              el.classList.remove('transition-all');
-              el.classList.remove('hover:scale-105');
-            });
-          }
-        }
-      });
-
-      const blobUrl = canvas.toDataURL('image/png');
-      setExportedImgUrl(blobUrl);
-      setShowSaveModal(true);
-
-      // Programmatic direct download trigger for fully open environments
-      try {
-        const downloadLink = document.createElement('a');
-        downloadLink.download = `wartime-tuckshop-${result.id}.png`;
-        downloadLink.href = blobUrl;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      } catch (dlErr) {
-        console.warn("Direct programmatic download prevented by sandbox constraints", dlErr);
-      }
-      
-      triggerFeedback('Stamp card ready! Click / Tap and hold to save.');
-    } catch (error) {
-      console.error(error);
-      triggerFeedback('Could not auto-generate. Try taking a screenshot!');
-    } finally {
-      setIsExporting(false);
-    }
   };
 
   return (
@@ -167,9 +200,9 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
 
         {/* Name (Tagline and emoji omitted for compact elegance) */}
         <div className="text-center mb-0.5">
-          <h2 
-            className="font-serif text-base xs:text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight mb-0.5"
-            style={{ color: result.color }}
+          <h2
+            className="font-serif text-base xs:text-lg sm:text-xl md:text-2xl font-extrabold tracking-normal mb-0.5"
+            style={{ color: result.color, letterSpacing: 'normal' }}
           >
             {result.name}
           </h2>
@@ -253,30 +286,35 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
         Save the stamp card to share on your social stories!
       </p>
 
-      {/* --- NON-DOWNLOADABLE CONTROL ACTIONS --- */}
-      {/* Streamlined Horizontal Flex layout on mobile to combine actions, preventing page overflow */}
-      <div className="pt-2 sm:pt-3 border-t border-border/45">
-        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3">
-          <button
-            onClick={handleSharePrimary}
-            className="inline-flex items-center gap-1 px-3 py-1.5 xs:px-4 xs:py-2 sm:px-6 sm:py-3.5 font-serif text-[10px] xs:text-xs font-bold tracking-wide text-cream bg-ink border border-ink rounded-xs cursor-pointer shadow-sm hover:bg-accent hover:border-accent hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-          >
-            <Share2 className="w-3 h-3" />
-            Share Results
-          </button>
+      {/* --- ACTIONS --- */}
+      <div className="pt-2 sm:pt-3 border-t border-border/45 flex flex-col items-center gap-1.5 sm:gap-2">
+        {/* Single primary action: shares the card image directly through
+            the native share sheet where supported (Instagram then appears
+            as a target with a Stories option), and otherwise downloads the
+            card + shows a save-it-yourself preview — all in one button so
+            there's no separate "save" affordance cluttering the row below. */}
+        <button
+          onClick={handleShareOrSave}
+          disabled={isExporting}
+          className="inline-flex items-center justify-center gap-1.5 w-full max-w-[280px] px-4 py-2 xs:py-2.5 sm:px-6 sm:py-3 font-serif text-[11px] xs:text-xs sm:text-sm font-bold tracking-wide text-cream bg-ink border border-ink rounded-xs cursor-pointer shadow-sm hover:bg-accent hover:border-accent hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-60 disabled:pointer-events-none"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+          {isExporting ? 'Preparing card...' : 'Share Stamp Card'}
+        </button>
 
+        {/* Secondary: small text links */}
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           <button
-            onClick={handleSaveCard}
-            disabled={isExporting}
-            className="inline-flex items-center gap-1 px-3 py-1.5 xs:px-4 xs:py-2 sm:px-6 sm:py-3.5 font-serif text-[10px] xs:text-xs font-bold tracking-wide text-ink border border-border bg-transparent rounded-xs cursor-pointer hover:bg-paper-dark hover:border-ink-faded hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 disabled:opacity-50"
+            onClick={handleCopyLink}
+            className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200"
           >
-            <Download className="w-3 h-3 text-accent animate-bounce" />
-            {isExporting ? 'Saving...' : 'Save Stamp Card'}
+            <Copy className="w-2.5 h-2.5" />
+            Copy link
           </button>
 
           <button
             onClick={onRestart}
-            className="inline-flex items-center gap-0.5 px-2 py-1.5 xs:px-3 xs:py-2 sm:px-4 sm:py-3 font-serif text-[9px] xs:text-xs border border-border bg-transparent text-ink-faded hover:text-ink hover:bg-paper-dark hover:border-ink-faded rounded-xs cursor-pointer transition-colors duration-200"
+            className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline cursor-pointer transition-colors duration-200"
           >
             <RotateCcw className="w-2.5 h-2.5" />
             Retake
@@ -286,9 +324,9 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
             href="https://www.instagram.com/wartime_tuckshop"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-2 py-1 font-serif text-[10px] xs:text-xs text-ink-faded hover:text-ink hover:underline border border-transparent hover:border-border/60 rounded-xs transition-all duration-200"
+            className="inline-flex items-center gap-1 font-serif text-[10px] xs:text-[11px] text-ink-faded hover:text-ink hover:underline transition-colors duration-200"
           >
-            <Instagram className="w-3 h-3 text-accent" />
+            <Instagram className="w-2.5 h-2.5" />
             Follow us
           </a>
         </div>
@@ -298,7 +336,7 @@ export default function ResultScreen({ result, onRestart }: ResultScreenProps) {
           <motion.p
             initial={{ opacity: 0, y: 3 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center text-[10px] sm:text-xs font-serif italic text-accent mt-1.5"
+            className="text-center text-[10px] sm:text-xs font-serif italic text-accent mt-0.5"
           >
             {feedback}
           </motion.p>

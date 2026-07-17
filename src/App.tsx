@@ -17,6 +17,7 @@ export default function App() {
     Array(quizData.length).fill(undefined)
   );
   const [result, setResult] = useState<PersonalityResult | null>(null);
+  const [isViewingSharedResult, setIsViewingSharedResult] = useState<boolean>(false);
 
   // Read URL query parameter on load to support direct result loading/sharing
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function App() {
       const matchedResult = personalities.find((p) => p.id === sharedResultId);
       if (matchedResult) {
         setResult(matchedResult);
+        setIsViewingSharedResult(true);
         setScreen('result');
       }
     }
@@ -35,6 +37,7 @@ export default function App() {
     setCurrentQuestion(0);
     setUserAnswers(Array(quizData.length).fill(undefined));
     setResult(null);
+    setIsViewingSharedResult(false);
     setScreen('quiz');
   };
 
@@ -84,6 +87,7 @@ export default function App() {
 
     const calculatedResult = personalities[finalIdx];
     setResult(calculatedResult);
+    setIsViewingSharedResult(false);
     setScreen('result');
 
     // Update browser URL query parameter quietly without a full page reload
@@ -96,6 +100,7 @@ export default function App() {
     setCurrentQuestion(0);
     setUserAnswers(Array(quizData.length).fill(undefined));
     setResult(null);
+    setIsViewingSharedResult(false);
 
     // Remove URL parameters
     window.history.replaceState(null, '', window.location.pathname);
@@ -173,7 +178,7 @@ export default function App() {
           )}
 
           {screen === 'result' && result && (
-            <ResultScreen result={result} onRestart={handleRestartQuiz} />
+            <ResultScreen result={result} onRestart={handleRestartQuiz} isSharedResult={isViewingSharedResult} />
           )}
         </main>
       </div>
